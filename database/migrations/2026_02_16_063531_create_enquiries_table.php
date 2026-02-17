@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('source')->default('direct');
             $table->string('status')->default('new');
             $table->string('priority')->default('normal');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('project_type')->nullable();
             $table->decimal('estimated_value', 12, 2)->nullable();
             $table->date('deadline')->nullable();

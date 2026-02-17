@@ -92,7 +92,7 @@
 function quoteBuilder() {
     return {
         taxRate: {{ old('tax_rate', $quote->tax_rate) }},
-        items: @json($quote->lineItems->map(fn($li) => ['description' => $li->description, 'quantity' => $li->quantity, 'unit' => $li->unit, 'rate' => $li->rate])->values()),
+        items: @json($lineItemsJson),
         addItem() { this.items.push({ description: '', quantity: 1, unit: 'hours', rate: 150 }); },
         removeItem(i) { this.items.splice(i, 1); },
         get subtotal() { return this.items.reduce((s, i) => s + (parseFloat(i.quantity) || 0) * (parseFloat(i.rate) || 0), 0); },

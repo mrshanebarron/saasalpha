@@ -60,13 +60,13 @@ class QuoteController extends Controller
 
         $quote = Quote::create([
             'tenant_id' => $tenantId,
-            'enquiry_id' => $validated['enquiry_id'],
+            'enquiry_id' => $validated['enquiry_id'] ?? null,
             'reference' => $reference,
             'client_name' => $validated['client_name'],
-            'scope_of_work' => $validated['scope_of_work'],
+            'scope_of_work' => $validated['scope_of_work'] ?? null,
             'tax_rate' => $validated['tax_rate'],
-            'valid_until' => $validated['valid_until'],
-            'terms' => $validated['terms'],
+            'valid_until' => $validated['valid_until'] ?? null,
+            'terms' => $validated['terms'] ?? null,
             'prepared_by' => auth()->id(),
             'status' => 'draft',
             'subtotal' => 0,
@@ -102,7 +102,8 @@ class QuoteController extends Controller
         $quote->load('lineItems');
         $tenantId = auth()->user()->tenant_id;
         $enquiries = Enquiry::where('tenant_id', $tenantId)->whereIn('status', ['new', 'reviewing', 'qualified'])->get();
-        return view('quotes.edit', compact('quote', 'enquiries'));
+        $lineItemsJson = $quote->lineItems->map(fn($li) => ['description' => $li->description, 'quantity' => (float) $li->quantity, 'unit' => $li->unit, 'rate' => (float) $li->rate])->values();
+        return view('quotes.edit', compact('quote', 'enquiries', 'lineItemsJson'));
     }
 
     public function update(Request $request, Quote $quote)
@@ -124,12 +125,12 @@ class QuoteController extends Controller
         ]);
 
         $quote->update([
-            'enquiry_id' => $validated['enquiry_id'],
+            'enquiry_id' => $validated['enquiry_id'] ?? $quote->enquiry_id,
             'client_name' => $validated['client_name'],
-            'scope_of_work' => $validated['scope_of_work'],
+            'scope_of_work' => $validated['scope_of_work'] ?? $quote->scope_of_work,
             'tax_rate' => $validated['tax_rate'],
-            'valid_until' => $validated['valid_until'],
-            'terms' => $validated['terms'],
+            'valid_until' => $validated['valid_until'] ?? $quote->valid_until,
+            'terms' => $validated['terms'] ?? $quote->terms,
         ]);
 
         $quote->lineItems()->delete();

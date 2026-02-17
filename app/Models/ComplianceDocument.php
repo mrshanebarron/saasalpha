@@ -17,7 +17,7 @@ class ComplianceDocument extends Model
 
     public function getIsExpiringSoonAttribute(): bool
     {
-        return $this->expiry_date && !$this->expiry_date->isPast() && $this->expiry_date->diffInDays(now()) <= $this->reminder_days;
+        return $this->expiry_date && !$this->expiry_date->isPast() && (int) abs($this->expiry_date->diffInDays(now())) <= $this->reminder_days;
     }
 
     public function getDaysUntilExpiryAttribute(): ?int
