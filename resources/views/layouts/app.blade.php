@@ -120,6 +120,33 @@
                         <h1 class="text-lg font-semibold text-white">@yield('heading', 'Dashboard')</h1>
                     </div>
                     <div class="flex items-center gap-4 text-sm text-slate-400">
+                        @php $unreadCount = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count(); @endphp
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="relative text-slate-400 hover:text-white">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+                                @if($unreadCount > 0)
+                                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+                                @endif
+                            </button>
+                            <div x-show="open" @click.away="open = false" x-cloak x-transition class="absolute right-0 mt-2 w-80 bg-slate-900 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-50">
+                                <div class="px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+                                    <span class="text-sm font-medium text-white">Notifications</span>
+                                    @if($unreadCount > 0)
+                                    <form method="POST" action="{{ route('notifications.mark-all-read') }}">@csrf <button type="submit" class="text-xs text-brand-400 hover:text-brand-300">Mark all read</button></form>
+                                    @endif
+                                </div>
+                                @php $headerNotifs = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->latest()->take(5)->get(); @endphp
+                                @forelse($headerNotifs as $n)
+                                <div class="px-4 py-3 border-b border-slate-800/50 hover:bg-slate-800/50">
+                                    <div class="text-sm text-slate-300">{{ $n->title }}</div>
+                                    <div class="text-xs text-slate-500 mt-0.5">{{ $n->message }}</div>
+                                    <div class="text-xs text-slate-600 mt-1">{{ $n->created_at->diffForHumans() }}</div>
+                                </div>
+                                @empty
+                                <div class="px-4 py-6 text-center text-sm text-slate-500">No new notifications</div>
+                                @endforelse
+                            </div>
+                        </div>
                         <span>{{ auth()->user()->tenant->name }}</span>
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-brand-600/20 text-brand-400">{{ ucfirst(auth()->user()->role) }}</span>
                     </div>

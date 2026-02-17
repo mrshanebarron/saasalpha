@@ -200,4 +200,11 @@ class QuoteController extends Controller
 
         return redirect()->route('projects.show', $project)->with('success', "Project {$reference} created from quote.");
     }
+
+    public function pdf(Quote $quote)
+    {
+        $quote->load(['enquiry', 'lineItems']);
+        $tenant = auth()->user()->tenant;
+        return view('quotes.pdf', compact('quote', 'tenant'));
+    }
 }

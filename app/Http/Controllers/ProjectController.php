@@ -119,7 +119,7 @@ class ProjectController extends Controller
     public function storeDeliverable(Request $request, Project $project)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'type' => 'required|in:report,calculation,drawing,inspection,review,other',
             'assigned_to' => 'nullable|exists:users,id',
             'due_date' => 'nullable|date',

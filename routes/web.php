@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{DashboardController, ProjectController, EnquiryController, QuoteController, ComplianceController, CpdController, TimeTrackingController, SubcontractorController, AuditController, AuthController};
+use App\Http\Controllers\{DashboardController, ProjectController, EnquiryController, QuoteController, ComplianceController, CpdController, TimeTrackingController, SubcontractorController, AuditController, AuthController, NotificationController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -55,6 +55,13 @@ Route::middleware('auth')->group(function () {
 
     // Subcontractors
     Route::resource('subcontractors', SubcontractorController::class);
+
+    // Notifications
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+
+    // Quote PDF
+    Route::get('/quotes/{quote}/pdf', [QuoteController::class, 'pdf'])->name('quotes.pdf');
 
     // Audit
     Route::get('/audit', [AuditController::class, 'index'])->name('audit.index');

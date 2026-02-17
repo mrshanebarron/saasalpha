@@ -74,7 +74,7 @@
             <form method="POST" action="{{ route('projects.deliverables.store', $project) }}" x-show="open" x-cloak class="mt-3 space-y-3">
                 @csrf
                 <div class="grid grid-cols-2 gap-3">
-                    <input type="text" name="name" placeholder="Deliverable name" required class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-brand-500">
+                    <input type="text" name="title" placeholder="Deliverable name" required class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-brand-500">
                     <select name="type" required class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
                         @foreach(['report','calculation','drawing','inspection','review','other'] as $t)
                             <option value="{{ $t }}">{{ ucfirst($t) }}</option>

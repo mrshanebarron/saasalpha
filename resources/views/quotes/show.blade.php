@@ -5,6 +5,7 @@
     {{-- Actions --}}
     <div class="flex items-center gap-3 mb-6">
         <a href="{{ route('quotes.edit', $quote) }}" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-sm hover:bg-slate-700 transition">Edit</a>
+        <a href="{{ route('quotes.pdf', $quote) }}" target="_blank" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-sm hover:bg-slate-700 transition">Download PDF</a>
         @if($quote->status === 'draft')
         <form method="POST" action="{{ route('quotes.send', $quote) }}">@csrf
             <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">Mark as Sent</button>
