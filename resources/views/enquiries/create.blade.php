@@ -6,9 +6,14 @@
         @csrf
 
         <div class="grid grid-cols-2 gap-5">
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1.5">Client Name *</label>
-                <input type="text" name="client_name" value="{{ old('client_name') }}" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+            <div x-data="clientAutocomplete()" class="relative">
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">Client Name * <span class="text-brand-500 text-[10px] font-normal ml-1">AI-assisted</span></label>
+                <input type="text" name="client_name" x-model="query" @input.debounce.300ms="search()" @focus="open = suggestions.length > 0" @click.away="open = false" value="{{ old('client_name') }}" required autocomplete="off" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                <div x-show="open && suggestions.length > 0" x-cloak class="absolute z-20 mt-1 w-full bg-slate-800 border border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                    <template x-for="s in suggestions" :key="s">
+                        <button type="button" @click="select(s)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-brand-600/20 hover:text-white" x-text="s"></button>
+                    </template>
+                </div>
                 @error('client_name')<p class="text-xs text-red-400 mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
@@ -82,4 +87,20 @@
         </div>
     </form>
 </div>
+<script>
+function clientAutocomplete() {
+    return {
+        query: '{{ old("client_name") }}',
+        suggestions: [],
+        open: false,
+        async search() {
+            if (this.query.length < 2) { this.suggestions = []; this.open = false; return; }
+            const res = await fetch(`/api/suggestions/clients?q=${encodeURIComponent(this.query)}`);
+            this.suggestions = await res.json();
+            this.open = this.suggestions.length > 0;
+        },
+        select(name) { this.query = name; this.open = false; }
+    }
+}
+</script>
 @endsection
