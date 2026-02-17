@@ -128,6 +128,18 @@
 
             {{-- Content --}}
             <div class="p-6">
+                @if(session('success'))
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" x-transition class="mb-4 px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-sm flex items-center justify-between">
+                    <span>{{ session('success') }}</span>
+                    <button @click="show = false" class="text-green-400/60 hover:text-green-400">&times;</button>
+                </div>
+                @endif
+                @if(session('error'))
+                <div x-data="{ show: true }" x-show="show" x-transition class="mb-4 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center justify-between">
+                    <span>{{ session('error') }}</span>
+                    <button @click="show = false" class="text-red-400/60 hover:text-red-400">&times;</button>
+                </div>
+                @endif
                 @yield('content')
             </div>
         </main>

@@ -2,6 +2,18 @@
 @section('heading', $enquiry->reference . ' — ' . $enquiry->client_name)
 @section('content')
 <div class="max-w-4xl">
+    {{-- Actions --}}
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{{ route('enquiries.edit', $enquiry) }}" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-sm hover:bg-slate-700 transition">Edit</a>
+        @if(in_array($enquiry->status, ['new', 'reviewing', 'qualified']))
+        <a href="{{ route('quotes.create', ['enquiry_id' => $enquiry->id]) }}" class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition">Create Quote</a>
+        @endif
+        <form method="POST" action="{{ route('enquiries.destroy', $enquiry) }}" onsubmit="return confirm('Delete this enquiry?')" class="ml-auto">
+            @csrf @method('DELETE')
+            <button type="submit" class="px-4 py-2 text-red-400 text-sm hover:text-red-300">Delete</button>
+        </form>
+    </div>
+
     <div class="bg-slate-900 rounded-xl border border-slate-800 p-6 mb-6">
         <div class="flex items-start justify-between mb-4">
             <div>
@@ -19,7 +31,9 @@
             <div><span class="text-slate-500 block text-xs">Contact</span><span class="text-slate-300">{{ $enquiry->client_email ?? '—' }}</span></div>
             <div><span class="text-slate-500 block text-xs">Assigned</span><span class="text-slate-300">{{ $enquiry->assignedTo?->name ?? 'Unassigned' }}</span></div>
         </div>
+        @if($enquiry->description)
         <div class="border-t border-slate-800 pt-4"><h4 class="text-xs font-medium text-slate-500 uppercase mb-2">Description</h4><p class="text-sm text-slate-300 whitespace-pre-line">{{ $enquiry->description }}</p></div>
+        @endif
     </div>
 
     @if($enquiry->quotes->count())
